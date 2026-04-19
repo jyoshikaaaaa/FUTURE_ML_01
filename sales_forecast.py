@@ -1,36 +1,57 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_absolute_error, mean_squared_error
 
-# Load dataset
+# -------- Load dataset --------
 data = pd.read_csv('data/sales.csv')
 
-# Convert Date column
+# -------- Data Cleaning --------
 data['Date'] = pd.to_datetime(data['Date'])
-
-# Sort values
 data = data.sort_values('Date')
 
-# Create numeric time feature
+# -------- Feature Engineering --------
 data['Days'] = (data['Date'] - data['Date'].min()).dt.days
 
-# Define features and target
+# -------- Define features and target --------
 X = data[['Days']]
 y = data['Sales']
 
-# Train model
+# -------- Train model --------
 model = LinearRegression()
 model.fit(X, y)
 
-# Predict future (next 30 days)
-future_days = pd.DataFrame({'Days': range(0, 45)})
-predictions = model.predict(future_days)
+# -------- Predictions on training data (for evaluation) --------
+y_pred = model.predict(X)
 
-# Plot
-plt.scatter(data['Days'], y, label='Actual Data')
-plt.plot(future_days, predictions, label='Predicted Sales')
+# -------- Evaluation --------
+mae = mean_absolute_error(y, y_pred)
+mse = mean_squared_error(y, y_pred)
+
+print("Model Evaluation:")
+print("MAE:", mae)
+print("MSE:", mse)
+
+# -------- Future Prediction --------
+future_days = pd.DataFrame({'Days': range(0, 45)})
+future_predictions = model.predict(future_days)
+
+# -------- Visualization --------
+plt.figure(figsize=(8, 5))
+
+# Actual data
+plt.scatter(data['Days'], y, label='Actual Sales')
+
+# Model fit
+plt.plot(data['Days'], y_pred, label='Model Fit')
+
+# Future forecast
+plt.plot(future_days, future_predictions, linestyle='--', label='Forecast')
+
 plt.xlabel("Days")
 plt.ylabel("Sales")
-plt.title("Sales Forecasting")
+plt.title("Sales Forecasting with Linear Regression")
 plt.legend()
+plt.grid()
+
 plt.show()
