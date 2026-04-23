@@ -21,10 +21,10 @@ y = data['Sales']
 model = LinearRegression()
 model.fit(X, y)
 
-# -------- Predictions on training data (for evaluation) --------
+# -------- Predictions for evaluation --------
 y_pred = model.predict(X)
 
-# -------- Evaluation --------
+# -------- Model Evaluation --------
 mae = mean_absolute_error(y, y_pred)
 mse = mean_squared_error(y, y_pred)
 
@@ -54,4 +54,7 @@ plt.title("Sales Forecasting with Linear Regression")
 plt.legend()
 plt.grid()
 
-plt.show()
+# -------- Save graph instead of showing --------
+plt.savefig("forecast.png")
+
+print("\nGraph saved as forecast.png")
